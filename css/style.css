@@ -1,0 +1,32 @@
+.container {
+    text-align: center;
+    margin: 0 auto;
+    width: 75%;
+}
+
+.container-div-flex-1,
+.container-div-flex-2 {
+    display: flex;
+    border: 1px solid black;
+    padding: 5px;
+    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.container-div-flex-1 div {
+    display: flex;
+    border: 1px solid black;
+    padding: 1px;
+}
+
+.container2 {
+    border: 1px solid black;
+    width: 75%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.container-div-flex-2 img {
+    box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.7);
+}
