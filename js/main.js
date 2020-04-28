@@ -19,6 +19,65 @@ function removeDay() {
 function generateCat() {
     var image = document.createElement("img");
     var div = document.getElementById("flex-cat-gen");
-    image.setAttribute("src", "https://cdn2.thecatapi.com/images/MTc0NTYwMA.gif");
+    image.setAttribute("src", "http://thecatapi.com/api/images/get?format=src&type=jpg&size=med");
     div.appendChild(image);
+}
+
+let Game = {
+    ROCK: 0,
+    PAPER: 1,
+    SCISSORS: 2,
+    RESULT: {
+        WINNER: 0,
+        LOSER: 1,
+        DRAW: 2
+    },
+    ProcessTheWinner: function(human, bot) {
+        switch (human) {
+            case this.ROCK:
+                if (bot == this.ROCK)
+                    return this.RESULT.DRAW;
+                else if (bot == this.PAPER)
+                    return this.RESULT.LOSER;
+                else if (bot == this.SCISSORS)
+                    return this.RESULT.WINNER;
+                break;
+
+            case this.PAPER:
+                if (bot == this.ROCK)
+                    return this.RESULT.WINNER;
+                else if (bot == this.PAPER)
+                    return this.RESULT.DRAW;
+                else if (bot == this.SCISSORS)
+                    return this.RESULT.LOSER;
+                break;
+
+            case this.SCISSORS:
+                if (bot == this.ROCK)
+                    return this.RESULT.LOSER;
+                else if (bot == this.PAPER)
+                    return this.RESULT.WINNER;
+                else if (bot == this.SCISSORS)
+                    return this.RESULT.DRAW;
+                break;
+
+        }
+    }
+}
+
+function rpsGame(yourchoice) {
+    var humanChoice, botChoice;
+    humanChoice = Math.floor(yourchoice.id);
+    botChoice = generateBotChoice();
+    result = Game.ProcessTheWinner(humanChoice, botChoice);
+    if (result == Game.RESULT.WINNER)
+        console.log("You won");
+    else if (result == Game.RESULT.DRAW)
+        console.log("Draw! Try again");
+    else if (result == Game.RESULT.WINNER)
+        console.log("You lose");
+}
+
+function generateBotChoice() {
+    return Math.floor(Math.random() * 3);
 }
