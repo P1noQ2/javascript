@@ -12,8 +12,8 @@ function ageInDay() {
 
 function removeDay() {
     var result = document.getElementById("result");
-    if (result.hasChildNodes)
-        result.removeChild(result.childNodes[0]);
+    if (hasChildNodes)
+        removeChild(childNodes[0]);
 }
 
 function generateCat() {
@@ -24,58 +24,57 @@ function generateCat() {
 }
 
 let Game = {
-    ROCK: 0,
-    PAPER: 1,
-    SCISSORS: 2,
-    RESULT: {
-        WINNER: 0,
-        LOSER: 1,
-        DRAW: 2
+    States: {
+        ROCK: 0,
+        PAPER: 1,
+        SCISSORS: 2,
+    },
+    Result: {
+        WINNER: 1,
+        LOSER: 0,
+        DRAW: 0.5,
+    },
+    Decision: {
+        0: 'ROCK',
+        1: 'PAPER',
+        2: 'SCISSORS'
+    },
+    ProcessDecision: function(human, bot) {
+        const humanDecision = this.Decision[human];
+        const botDecision = this.Decision[bot];
+        return [humanDecision, botDecision];
     },
     ProcessTheWinner: function(human, bot) {
-        switch (human) {
-            case this.ROCK:
-                if (bot == this.ROCK)
-                    return this.RESULT.DRAW;
-                else if (bot == this.PAPER)
-                    return this.RESULT.LOSER;
-                else if (bot == this.SCISSORS)
-                    return this.RESULT.WINNER;
-                break;
-
-            case this.PAPER:
-                if (bot == this.ROCK)
-                    return this.RESULT.WINNER;
-                else if (bot == this.PAPER)
-                    return this.RESULT.DRAW;
-                else if (bot == this.SCISSORS)
-                    return this.RESULT.LOSER;
-                break;
-
-            case this.SCISSORS:
-                if (bot == this.ROCK)
-                    return this.RESULT.LOSER;
-                else if (bot == this.PAPER)
-                    return this.RESULT.WINNER;
-                else if (bot == this.SCISSORS)
-                    return this.RESULT.DRAW;
-                break;
-
+        const rpsDatabase = {
+            ROCK: { SCISSORS: this.Result.WINNER, ROCK: this.Result.DRAW, PAPER: this.Result.LOSER },
+            PAPER: { ROCK: this.Result.WINNER, PAPER: this.Result.DRAW, SCISSORS: this.Result.LOSER },
+            SCISSORS: { PAPER: this.Result.WINNER, SCISSORS: this.Result.DRAW, ROCK: this.Result.LOSER }
         }
+        const humanScore = rpsDatabase[human][bot];
+        const botChoice = rpsDatabase[bot][human];
+
+        return [humanScore, botChoice];
     }
 }
 
 function rpsGame(yourchoice) {
     var humanChoice, botChoice;
     humanChoice = Math.floor(yourchoice.id);
+    console.log('You Picked ' + Game.Decision[humanChoice]);
     botChoice = generateBotChoice();
-    result = Game.ProcessTheWinner(humanChoice, botChoice);
-    if (result == Game.RESULT.WINNER)
-        console.log("You won");
-    else if (result == Game.RESULT.DRAW)
-        console.log("Draw! Try again");
-    else if (result == Game.RESULT.WINNER)
-        console.log("You lose");
+    console.log('Computer Picked ' + Game.Decision[botChoice]);
+    const Scores = Game.ProcessTheWinner(...Game.ProcessDecision(humanChoice, botChoice));
+    const result = finalMessage(Scores);
+    console.log(result);
+}
+
+function finalMessage([humanScore, botScore]) {
+    if (humanScore === 0)
+        return { 'Message': 'You Lost!', 'color': 'red' };
+    else if (humanScore === 0.5)
+        return { 'Message': 'Draw', 'color': 'yellow' };
+    else if (humanScore === 1)
+        return { 'Message': 'You Win', 'color': 'green' };
 }
 
 function generateBotChoice() {
