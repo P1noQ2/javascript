@@ -39,12 +39,12 @@ let Game = {
         1: 'PAPER',
         2: 'SCISSORS'
     },
-    ProcessDecision: function(human, bot) {
+    ProcessDecision: function (human, bot) {
         const humanDecision = this.Decision[human];
         const botDecision = this.Decision[bot];
         return [humanDecision, botDecision];
     },
-    ProcessTheWinner: function(human, bot) {
+    ProcessTheWinner: function (human, bot) {
         const rpsDatabase = {
             ROCK: { SCISSORS: this.Result.WINNER, ROCK: this.Result.DRAW, PAPER: this.Result.LOSER },
             PAPER: { ROCK: this.Result.WINNER, PAPER: this.Result.DRAW, SCISSORS: this.Result.LOSER },
@@ -64,11 +64,11 @@ function rpsGame(yourchoice) {
     botChoice = generateBotChoice();
     console.log('Computer Picked ' + Game.Decision[botChoice]);
     const Scores = Game.ProcessTheWinner(...Game.ProcessDecision(humanChoice, botChoice));
-    const result = finalMessage(Scores);
+    const result = finalMessage(...Scores);
     console.log(result);
 }
 
-function finalMessage([humanScore, botScore]) {
+function finalMessage(humanScore, botScore) {
     if (humanScore === 0)
         return { 'Message': 'You Lost!', 'color': 'red' };
     else if (humanScore === 0.5)
@@ -79,4 +79,20 @@ function finalMessage([humanScore, botScore]) {
 
 function generateBotChoice() {
     return Math.floor(Math.random() * 3);
+}
+class Parent {
+    constructor(name) {
+        this.name = name;
+    }
+    getname() {
+        return this.name;
+    }
+}
+class Child extends Parent {
+    constructor(name) {
+        super(name);
+    }
+    getMessage() {
+        return 'Hello ' + super.getname();
+    }
 }
