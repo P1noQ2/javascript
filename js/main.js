@@ -1,82 +1,112 @@
-function ageInDay() {
-    var birthDate = prompt("what year were you born in?");
-    let days = (2020 - birthDate) * 365;
-
-    var h1 = document.createElement("h1");
-    var textNode = document.createTextNode("You are " + days + " days");
-    h1.setAttribute("id", "ageInDays");
-    h1.appendChild(textNode);
-    // removeDay();
-    document.getElementById("result").appendChild(h1);
-}
-
-function removeDay() {
-    var result = document.getElementById("result");
-    if (hasChildNodes)
-        removeChild(childNodes[0]);
-}
-
-function generateCat() {
-    var image = document.createElement("img");
-    var div = document.getElementById("flex-cat-gen");
-    image.setAttribute("src", "http://thecatapi.com/api/images/get?format=src&type=jpg&size=med");
-    div.appendChild(image);
-}
-
-let Game = {
-    States: {
-        ROCK: 0,
-        PAPER: 1,
-        SCISSORS: 2,
-    },
-    Result: {
-        WINNER: 1,
-        LOSER: 0,
-        DRAW: 0.5,
-    },
-    Decision: {
-        0: 'ROCK',
-        1: 'PAPER',
-        2: 'SCISSORS'
-    },
-    ProcessDecision: function(human, bot) {
-        const humanDecision = this.Decision[human];
-        const botDecision = this.Decision[bot];
-        return [humanDecision, botDecision];
-    },
-    ProcessTheWinner: function(human, bot) {
-        const rpsDatabase = {
+class RockPaperScissors {
+    constructor(HumanChosenValue, BotChosenValue = -1) {
+        this.HumanChosenValue = HumanChosenValue;
+        this.BotChosenValue = BotChosenValue;
+    }
+    getHumanChosenValue() {
+        return this.HumanChosenValue;
+    }
+    getBotChosenValue() {
+        return this.BotChosenValue;
+    }
+    get Decision() {
+        return {
+            0: 'ROCK',
+            1: 'PAPER',
+            2: 'SCISSORS'
+        };
+    }
+    get Result() {
+        return {
+            WINNER: 1,
+            LOSER: 0,
+            DRAW: 0.5,
+        }
+    }
+    get State() {
+        return {
+            ROCK: 0,
+            PAPER: 1,
+            SCISSORS: 2,
+        }
+    }
+    get rpsDatabase() {
+        return {
             ROCK: { SCISSORS: this.Result.WINNER, ROCK: this.Result.DRAW, PAPER: this.Result.LOSER },
             PAPER: { ROCK: this.Result.WINNER, PAPER: this.Result.DRAW, SCISSORS: this.Result.LOSER },
             SCISSORS: { PAPER: this.Result.WINNER, SCISSORS: this.Result.DRAW, ROCK: this.Result.LOSER }
         }
-        const humanScore = rpsDatabase[human][bot];
-        const botChoice = rpsDatabase[bot][human];
+    }
+    ProcessTheWinner() {
+        const humanDecision = this.Decision[this.HumanChosenValue];
+        const botDecision = this.Decision[this.BotChosenValue];
+        let decissionResult = [humanDecision, botDecision];
 
-        return [humanScore, botChoice];
+        const humanScore = this.rpsDatabase[decissionResult[0]][decissionResult[1]];
+        const botChoice = this.rpsDatabase[decissionResult[1]][decissionResult[0]];
+        let winnerResult = [humanScore, botChoice]
+        return winnerResult;
+    }
+}
+class Human extends RockPaperScissors {
+    constructor(ChosenValue) {
+        super(ChosenValue);
+    }
+    getHumanChoice() {
+        return parseInt(super.getHumanChosenValue());
+    }
+}
+class Bot extends RockPaperScissors {
+    constructor(ChosenValue = Math.floor(Math.random() * 3)) {
+        super(-1, ChosenValue);
+    }
+    getBotChoice() {
+        return parseInt(super.getBotChosenValue());
     }
 }
 
 function rpsGame(yourchoice) {
-    var humanChoice, botChoice;
-    humanChoice = Math.floor(yourchoice.id);
-    console.log('You Picked ' + Game.Decision[humanChoice]);
-    botChoice = generateBotChoice();
-    console.log('Computer Picked ' + Game.Decision[botChoice]);
-    const Scores = Game.ProcessTheWinner(...Game.ProcessDecision(humanChoice, botChoice));
-    const result = finalMessage(Scores);
-    console.log(result);
+    var humanChoice = new Human(Math.floor(yourchoice.id));
+    var botChoice = new Bot();
+    var game = new RockPaperScissors(humanChoice.getHumanChoice(), botChoice.getBotChoice());
+    let Scores = game.ProcessTheWinner();
+    Scores.push(humanChoice.getHumanChoice());
+    Scores.push(botChoice.getBotChoice());
+    const result = finalMessage(...Scores);
+    rpsFrontEnd(result);
+}
+function rpsFrontEnd(finalResult) {
+    var imageDatabse = {
+        '0': document.getElementById("0").src,
+        '1': document.getElementById("1").src,
+        '2': document.getElementById("2").src
+    }
+    document.getElementById('0').remove();
+    document.getElementById('1').remove();
+    document.getElementById('2').remove();
+
+    var humanDiv = document.createElement("div");
+    var botDiv = document.createElement("div");
+    var messageDiv = document.createElement("div");
+
+    humanDiv.innerHTML = "<img src='" + imageDatabse[finalResult['Human']] + "' height=150 width=150 />";
+    messageDiv.innerHTML = "<h1 style='font-size: 60px padding: 30px ;color: " + finalResult['color'] + "'>" + finalResult.Message + "</h1>";
+    botDiv.innerHTML = "<img src='" + imageDatabse[finalResult['Bot']] + "' height=150 width=150 />";
+
+    document.getElementById("flex-box-rps-div").appendChild(humanDiv);
+    document.getElementById("flex-box-rps-div").appendChild(messageDiv);
+    document.getElementById("flex-box-rps-div").appendChild(botDiv);
 }
 
-function finalMessage([humanScore, botScore]) {
+function finalMessage(humanScore, botScore, humanChoice, botChoice) {
     if (humanScore === 0)
-        return { 'Message': 'You Lost!', 'color': 'red' };
+        return { 'Human': humanChoice, 'Bot': botChoice, 'Message': 'You Lost!', 'color': 'red' };
     else if (humanScore === 0.5)
-        return { 'Message': 'Draw', 'color': 'yellow' };
+        return { 'Human': humanChoice, 'Bot': botChoice, 'Message': 'Draw', 'color': 'yellow' };
     else if (humanScore === 1)
-        return { 'Message': 'You Win', 'color': 'green' };
+        return { 'Human': humanChoice, 'Bot': botChoice, 'Message': 'You Win', 'color': 'green' };
 }
 
 function generateBotChoice() {
-    return Math.floor(Math.random() * 3);
+    return Math.floor(Math.random() * 3)
 }
