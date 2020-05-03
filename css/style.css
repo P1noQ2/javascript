@@ -5,7 +5,10 @@
 }
 
 .container-div-flex-1,
-.container-div-flex-2 {
+.container-div-flex-2,
+.flex-blackjack-row1,
+.flex-blackjack-row2,
+.flex-blackjack-row3 {
     display: flex;
     border: 1px solid black;
     padding: 5px;
@@ -14,19 +17,21 @@
     flex-wrap: wrap;
 }
 
-.container-div-flex-1 div {
-    display: flex;
-    border: 1px solid black;
-    padding: 1px;
+.flex-blackjack-row1,
+.flex-blackjack-row2 {
+    background: url('../images/blackjack-table.png') center;
+    color: #ffffff
 }
 
-.container2 {
+.flex-blackjack-row1 div {
     border: 1px solid black;
-    width: 75%;
-    margin: 0 auto;
+    flex: 1;
+    padding: 10px;
+    min-height: 350px;
     text-align: center;
 }
 
-.container-div-flex-2 img {
-    box-shadow: 0px 10px 50px rgba(0, 0, 0, 0.7);
+.flex-blackjack-row1 img {
+    padding: 10px;
+    width: 25%;
 }
